@@ -3,9 +3,11 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useCart } from '@/context/CartContext';
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
+    const { cartItemCount } = useCart();
 
     const toggleMenu = () => setIsOpen(!isOpen);
     const closeMenu = () => setIsOpen(false);
@@ -48,7 +50,7 @@ export default function Navbar() {
                 Mi Cuenta
             </Link>
             <Link href="/cart" className="btn nav-cart-btn navbar-btn" onClick={closeMenu}>
-                🛒 <span className="cart-count">0</span>
+                🛒 <span className="cart-count">{cartItemCount}</span>
             </Link>
             </div>
         </nav>
