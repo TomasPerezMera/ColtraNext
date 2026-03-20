@@ -1,26 +1,18 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@font-face {
+  font-family: "Clarendon Regular";
+  src: url("/fonts/ClarendonRegular.woff") format("woff");
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  @apply bg-black text-white min-h-screen;
+  font-family: "Clarendon Regular", serif;
+}
+
+hr {
+  @apply w-4/5 h-0.5 mx-auto my-5 border-0 opacity-80;
+  background: linear-gradient(to left, #4b6cad, #72419d);
 }
