@@ -27,13 +27,19 @@ export default function Navbar() {
 
     return (
         <>
-        <nav className="navbar">
-            <Link href="/" className="navbar-logo">
-            <Image src="/favicon.ico" alt="Coltrane" width={40} height={40} />
+        <nav className="flex items-center justify-between gap-4 py-2.5 px-5 w-[90%] max-w-7xl mx-auto relative">
+            <Link href="/" className="navbar-logo flex items-center justify-center z-[1001]">
+                <Image
+                    src="/favicon.ico"
+                    alt="Coltrane"
+                    width={40}
+                    height={40}
+                    className='h-10 w-auto object-contain transition-transform duration-200 hover:scale-105'
+                />
             </Link>
 
             <button
-            className={`hamburger ${isOpen ? 'active' : ''}`}
+            className={`hamburger ${isOpen ? 'active' : ''} flex flex-col gap-1.5 bg-transparent border-none cursor-pointer p-2 z-[1001] md:hidden` }
             onClick={toggleMenu}
             aria-label="Menu"
             >
@@ -42,7 +48,7 @@ export default function Navbar() {
             </svg>
             </button>
 
-            <div className={`navbar-menu ${isOpen ? 'active' : ''}`}>
+            <div className={`navbar-menu ${isOpen ? 'right-0' : '-right-full'} fixed top-0 -right-full w-[70%] max-w-[300px] h-screen bg-black/95 backdrop-blur-md flex flex-col gap-6 pt-20 px-8 pb-8 transition-all duration-300 z-[1000] md:static md:right-0 md:w-auto md:h-auto md:flex-row md:bg-transparent md:backdrop-blur-none md:p-0`}>
             <Link href="/products" className="btn navbar-btn" onClick={closeMenu}>
                 Productos
             </Link>
@@ -54,8 +60,7 @@ export default function Navbar() {
             </Link>
             </div>
         </nav>
-
-        {isOpen && <div className="navbar-overlay active" onClick={closeMenu} />}
+        {isOpen && <div className="fixed inset-0 bg-black/70 z-[999]" onClick={closeMenu} />}
         </>
     );
 }

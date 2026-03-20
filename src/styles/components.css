@@ -35,6 +35,9 @@
 
 .btn--nav {
     border: 1px solid transparent;
+    width: auto;
+    font-size: clamp(1.25rem, 1.2vw, 1.75rem);
+    text-decoration: none;
 }
 
 .btn--danger {
