@@ -14,16 +14,20 @@ async function getProducts() {
 export default async function ProductsPage() {
     const products = await getProducts();
     return (
-        <section className="product-catalog">
-        <h1 className="header-title">El Rincón de Coltrane</h1>
-        <hr />
-        <div className="product-catalog-container container">
-            <div className="product-grid">
-            {products.map((product) => (
-                <ProductCard key={product.id} product={product} />
-            ))}
+        <section className="product-catalog py-8">
+            <h1
+            className="header-title my-2.5 text-4xl md:text-5xl text-center font-medium leading-tight tracking-widest"
+            style={{ background: 'linear-gradient(to left, #2551a8, #72419d)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                El Rincón de Coltrane
+            </h1>
+            <hr />
+            <div className="product-catalog-container container">
+                <div className="product-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 w-full">
+                {products.map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                ))}
+                </div>
             </div>
-        </div>
         </section>
     );
 }

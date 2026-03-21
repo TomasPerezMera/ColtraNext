@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 export default function ProductCard({ product }: { product: Product }) {
     return (
-        <article className="product-card gradient-border">
+        <article className="product-card gradient-border grid grid-rows-[auto_1fr_auto] gap-4 p-5">
         <div className="cover-wrapper hover-vinyl">
             <Link href={`/products/${product.id}`}>
             <Image
@@ -17,9 +17,11 @@ export default function ProductCard({ product }: { product: Product }) {
         </div>
 
         <div className="product-detail-titles">
-            <h2 className="product-title">{product.name}</h2>
-            <p>Artista: {product.artist}</p>
-            <p>Precio: ${product.currentPrice}</p>
+            <h2 className="product-title my-6 text-center text-2xl md:text-3xl font-medium tracking-wide leading-tight">
+                {product.name}
+            </h2>
+            <p className="text-sm md:text-base">Artista: {product.artist}</p>
+            <p className="text-sm md:text-base">Precio: ${product.currentPrice}</p>
         </div>
 
         <Link href={`/products/${product.id}`} className="btn gradient-border">

@@ -4,8 +4,8 @@ import WelcomeText from '@/components/layout/WelcomeText';
 
 export default function Home() {
     return (
-        <div className="welcome-container container">
-        <div className="welcome-image cover-wrapper hover-vinyl">
+        <div className="welcome-container container flex flex-col items-center gap-8 py-8">
+        <div className="welcome-image cover-wrapper hover-vinyl w-full max-w-md aspect-square">
             <Link href="/products">
                 <Image
                     src="/coltrane.jpg"

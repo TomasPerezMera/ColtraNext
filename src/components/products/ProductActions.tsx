@@ -15,21 +15,21 @@ export default function ProductActions({ productId, maxStock }: { productId: str
     };
 
     return (
-        <div className="detail-actions">
-        <div className="quantity-selector">
-            <button className="btn qty-btn-detail qty-btn-minus" onClick={decrease}>-</button>
-            <span className="qty-value">{quantity}</span>
-            <button className="btn qty-btn-detail qty-btn-plus" onClick={increase}>+</button>
-        </div>
+        <div className="detail-actions flex flex-wrap gap-3 my-2 px-4">
+            <div className="quantity-selector flex gap-4 w-full md:w-auto">
+                <button className="btn qty-btn-detail qty-btn-minus" onClick={decrease}>-</button>
+                <span className="qty-value">{quantity}</span>
+                <button className="btn qty-btn-detail qty-btn-plus" onClick={increase}>+</button>
+            </div>
 
-        <Link href="/products" className="btn">Volver al catálogo</Link>
+            <Link href="/products" className="btn">Volver al catálogo</Link>
 
-        <button
-            className="add-to-cart btn gradient-border"
-            onClick={addToCart}
-        >
-            Agregar al carrito
-        </button>
+            <button
+                className="add-to-cart btn gradient-border"
+                onClick={addToCart}
+            >
+                Agregar al carrito
+            </button>
         </div>
     );
 }
