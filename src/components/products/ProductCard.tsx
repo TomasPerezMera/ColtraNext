@@ -6,9 +6,9 @@ export default function ProductCard({ product }: { product: Product }) {
     return (
         <article className="product-card gradient-border grid grid-rows-[auto_1fr_auto] gap-4 p-5">
         <div className="cover-wrapper hover-vinyl">
-            <Link href={`/products/${product.id}`}>
+            <Link href={`/products/${product.slug}`}>
             <Image
-                src={`/covers/${product.coverImageSource}`}
+                src={`/static/covers/${product.coverImageSource}`}
                 alt={product.name}
                 width={300}
                 height={300}

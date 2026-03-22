@@ -34,6 +34,7 @@ export default function Navbar() {
                     alt="Coltrane"
                     width={50}
                     height={50}
+                    loading="eager"
                     className='h-10 w-auto object-contain transition-transform duration-200 hover:scale-105'
                 />
             </Link>

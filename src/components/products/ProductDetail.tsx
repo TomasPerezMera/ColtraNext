@@ -9,7 +9,7 @@ export default function ProductDetail({ product }: { product: Product }) {
             <div className="product-detail flex flex-col gap-5 mt-5">
                 <div className="cover-wrapper hover-vinyl">
                     <Image
-                    src={`/covers/${product.coverImageSource}`}
+                    src={`/static/covers/${product.coverImageSource}`}
                     alt={product.name}
                     width={400}
                     height={400}

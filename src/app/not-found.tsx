@@ -5,7 +5,7 @@ export default function NotFound() {
     return (
         <div className="notFound">
             <section className="title404">
-                <h2>404 - Página No Encontrada!</h2>
+                <h2 className="product-title">404 - Página No Encontrada!</h2>
             </section>
             <section className="body404">
                 <p>
@@ -15,7 +15,7 @@ export default function NotFound() {
             <figure className="coltrane404">
                 <Link href="/">
                     <Image
-                    src="/src/public/static/coltrane404.jpg"
+                    src="/static/coltrane404.jpg"
                     alt="Coltrane Not Found"
                     width={500}
                     height={500}

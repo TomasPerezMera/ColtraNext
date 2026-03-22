@@ -5,6 +5,7 @@ export interface Product {
     currentPrice: number;
     coverImageSource: string;
     stock: number;
+    slug: string;
     description: string;
     category: string;
     isAvailable: boolean;
