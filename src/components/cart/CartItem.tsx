@@ -52,23 +52,17 @@ export default function CartItem({ item }: { item: CartItemType }) {
             onClick={handleDecrease}
             disabled={isUpdating}
             className="btn cart-btn-minus"
-            >
-            -
-            </button>
+            >-</button>
             <span className="cart-qty-display">{item.quantity}</span>
             <button
             onClick={handleIncrease}
             disabled={isUpdating || !canIncrease}
             className="btn cart-btn-plus"
-            >
-            +
-            </button>
+            >+</button>
             <button
             onClick={() => removeFromCart(item.productId)}
             className="btn btn--danger"
-            >
-            Eliminar
-            </button>
+            >Eliminar</button>
         </div>
         </div>
     );

@@ -12,7 +12,8 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
     <html lang="es">
-        <body>
+        <link rel="icon" type="image/x-icon" href="/favicon.ico"></link>
+        <body className="bg-black text-white min-h-screen">
         <CartProvider>
             <Navbar />
             {children}

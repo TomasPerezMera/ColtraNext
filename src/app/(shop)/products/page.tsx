@@ -16,8 +16,7 @@ export default async function ProductsPage() {
     return (
         <section className="product-catalog py-8">
             <h1
-            className="header-title my-2.5 text-4xl md:text-5xl text-center font-medium leading-tight tracking-widest"
-            style={{ background: 'linear-gradient(to left, #2551a8, #72419d)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+            className="header-title my-2.5 text-4xl md:text-5xl font-medium leading-tight tracking-widest">
                 El Rincón de Coltrane
             </h1>
             <hr />

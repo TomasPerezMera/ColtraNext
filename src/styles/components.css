@@ -126,6 +126,23 @@
     }
 }
 
+.header-title {
+    margin: 10px auto;
+    font-size: clamp(2.5rem, 2vw, 4rem);
+    background: linear-gradient(to left, var(--darkBlue), var(--violet));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-align: center;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3),
+    0px 0px 10px rgba(66, 135, 245, 0.6);
+    letter-spacing: 0.15em;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
 
 /* Container Utilities */
 
