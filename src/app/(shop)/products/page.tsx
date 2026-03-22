@@ -1,18 +1,35 @@
+'use client';
+
 import { db } from '@/lib/firebase/config';
 import { collection, getDocs } from 'firebase/firestore';
 import ProductCard from '@/components/products/ProductCard';
 import { Product } from '@/types';
+import { useEffect, useState } from 'react';
 
-async function getProducts() {
-    const snapshot = await getDocs(collection(db, 'products'));
-    return snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-    })) as Product[];
-}
 
-export default async function ProductsPage() {
-    const products = await getProducts();
+export default function ProductsPage() {
+    const [products, setProducts] = useState<Product[]>([]);
+    const [loading, setLoading] = useState(true);
+
+useEffect(() => {
+    async function load() {
+        try {
+            const snap = await getDocs(collection(db, 'products'));
+            const data = snap.docs.map(d => ({
+            id: d.id,
+            ...d.data()
+            })) as Product[];
+            setProducts(data);
+        } catch (error) {
+            console.error('Error:', error);
+        } finally {
+            setLoading(false);
+        }
+        }
+        load();
+    }, []);
+
+    if (loading) return <div>Cargando...</div>;
     return (
         <section className="product-catalog py-8">
             <h1

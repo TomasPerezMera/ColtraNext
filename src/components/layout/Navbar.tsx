@@ -30,7 +30,7 @@ export default function Navbar() {
         <nav className="flex items-center justify-between gap-4 py-2.5 px-5 w-[90%] max-w-7xl mx-auto relative">
             <Link href="/" className="navbar-logo flex items-center justify-center z-[1001]">
                 <Image
-                    src="/src/public/favicon.ico"
+                    src="/favicon.ico"
                     alt="Coltrane"
                     width={50}
                     height={50}
