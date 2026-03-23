@@ -63,7 +63,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         }
     } catch (error) {
         console.error('Error loading cart:', error);
-        }
+    }
     }
 
     useEffect(() => {
@@ -74,7 +74,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
     async function addToCart(productId: string, quantity: number) {
         let cartId = localStorage.getItem('cartId');
-
         // Si no hay cartId, crear carrito primero;
         if (!cartId) {
             const newCart: Omit<Cart, 'id'> = {
@@ -91,15 +90,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
         }
 
         try {
-            // 1. Leer carrito actual desde Firestore (fuente de verdad);
+            // 1. Leer carrito actual desde Firestore;
             const cartRef = doc(db, 'carts', cartId);
             const cartDoc = await getDoc(cartRef);
 
             if (!cartDoc.exists()) {
+                console.error('[addToCart] ERROR: Carrito no existe en Firestore');
                 toast.error('Error: carrito no encontrado');
                 return;
             }
-
             const currentCart = { id: cartDoc.id, ...cartDoc.data() } as Cart;
 
             // 2. Obtener producto de Firestore;
@@ -114,6 +113,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
             // 3. Validar límite de 3 items;
             const currentTotal = currentCart.products.reduce((sum, item) => sum + item.quantity, 0);
             if (currentTotal + quantity > 3) {
+                console.warn('🛒 [addToCart] Límite excedido!');
                 toast.error('Máximo 3 ítems por compra!');
                 return;
             }
@@ -154,12 +154,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
             });
 
             // 6. Actualizar estado local para UI;
-            setCart({
+            const newCartState = {
                 ...currentCart,
                 products: updatedProducts,
                 totalPrice,
                 updatedAt: new Date(),
-            });
+            };
+            setCart(newCartState);
 
             toast.success(`${quantity} producto(s) añadido(s) al carrito`);
         } catch (error) {
@@ -176,7 +177,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
             // 1. Leer carrito actual desde Firestore;
             const cartRef = doc(db, 'carts', cartId);
             const cartDoc = await getDoc(cartRef);
-
             if (!cartDoc.exists()) return;
 
             const currentCart = { id: cartDoc.id, ...cartDoc.data() } as Cart;
@@ -231,7 +231,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
             // 1. Leer carrito actual desde Firestore;
             const cartRef = doc(db, 'carts', cartId);
             const cartDoc = await getDoc(cartRef);
-
             if (!cartDoc.exists()) return;
 
             const currentCart = { id: cartDoc.id, ...cartDoc.data() } as Cart;
