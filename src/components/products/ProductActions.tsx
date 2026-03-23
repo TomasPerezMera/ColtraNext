@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
 
+
 export default function ProductActions({ productId, maxStock }: { productId: string; maxStock: number }) {
     const [quantity, setQuantity] = useState(1);
     const { addToCart } = useCart();
@@ -12,6 +13,7 @@ export default function ProductActions({ productId, maxStock }: { productId: str
     const increase = () => setQuantity(prev => Math.min(Math.min(maxStock, 3), prev + 1));
 
     const handleAddToCart = async () => {
+        console.log('Agregando:', productId, quantity);
         await addToCart(productId, quantity);
     };
 

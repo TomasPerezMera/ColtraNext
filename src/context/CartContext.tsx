@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { db } from '@/lib/firebase/config';
-import { doc, getDoc, setDoc, updateDoc, deleteDoc, collection, addDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, collection, addDoc } from 'firebase/firestore';
 import { Cart, CartItem, Product } from '@/types';
 import toast from 'react-hot-toast';
 
@@ -63,7 +63,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         }
     } catch (error) {
         console.error('Error loading cart:', error);
-    }
+        }
     }
 
     useEffect(() => {
@@ -73,133 +73,195 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }, []);
 
     async function addToCart(productId: string, quantity: number) {
-        const cartId = localStorage.getItem('cartId');
+        let cartId = localStorage.getItem('cartId');
+
+        // Si no hay cartId, crear carrito primero;
         if (!cartId) {
-        await loadCart();
-        return addToCart(productId, quantity);
+            const newCart: Omit<Cart, 'id'> = {
+                userId: '',
+                products: [],
+                totalPrice: 0,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            };
+
+            const cartRef = await addDoc(collection(db, 'carts'), newCart);
+            cartId = cartRef.id;
+            localStorage.setItem('cartId', cartId);
         }
 
         try {
-        // Obtener producto de Firestore;
-        const productDoc = await getDoc(doc(db, 'products', productId));
-        if (!productDoc.exists()) {
-            toast.error('Producto no encontrado');
-            return;
-        }
+            // 1. Leer carrito actual desde Firestore (fuente de verdad);
+            const cartRef = doc(db, 'carts', cartId);
+            const cartDoc = await getDoc(cartRef);
 
-        const product = { id: productDoc.id, ...productDoc.data() } as Product;
+            if (!cartDoc.exists()) {
+                toast.error('Error: carrito no encontrado');
+                return;
+            }
 
-        // Validar límite de 3 items;
-        const currentTotal = cart?.products.reduce((sum, item) => sum + item.quantity, 0) || 0;
-        if (currentTotal + quantity > 3) {
-            toast.error('Máximo 3 ítems por compra!');
-            return;
-        }
+            const currentCart = { id: cartDoc.id, ...cartDoc.data() } as Cart;
 
-        const cartRef = doc(db, 'carts', cartId);
-        const existingItem = cart?.products.find(item => item.productId === productId);
+            // 2. Obtener producto de Firestore;
+            const productDoc = await getDoc(doc(db, 'products', productId));
+            if (!productDoc.exists()) {
+                toast.error('Producto no encontrado');
+                return;
+            }
 
-        let updatedProducts: CartItem[];
+            const product = { id: productDoc.id, ...productDoc.data() } as Product;
 
-        if (existingItem) {
-            // Actualizar cantidad;
-            updatedProducts = cart!.products.map(item =>
-            item.productId === productId
-                ? { ...item, quantity: item.quantity + quantity }
-                : item
+            // 3. Validar límite de 3 items;
+            const currentTotal = currentCart.products.reduce((sum, item) => sum + item.quantity, 0);
+            if (currentTotal + quantity > 3) {
+                toast.error('Máximo 3 ítems por compra!');
+                return;
+            }
+
+            // 4. Calcular productos actualizados;
+            const existingItem = currentCart.products.find(item => item.productId === productId);
+            let updatedProducts: CartItem[];
+
+            if (existingItem) {
+                // Actualizar cantidad;
+                updatedProducts = currentCart.products.map(item =>
+                    item.productId === productId
+                        ? { ...item, quantity: item.quantity + quantity }
+                        : item
+                );
+            } else {
+                // Agregar nuevo item;
+                const newItem: CartItem = {
+                    productId,
+                    quantity,
+                    price: product.currentPrice,
+                    name: product.name,
+                    coverImageSource: product.coverImageSource,
+                };
+                updatedProducts = [...currentCart.products, newItem];
+            }
+
+            const totalPrice = updatedProducts.reduce(
+                (sum, item) => sum + item.price * item.quantity,
+                0
             );
-        } else {
-            // Agregar nuevo item;
-            const newItem: CartItem = {
-            productId,
-            quantity,
-            price: product.currentPrice,
-            name: product.name,
-            coverImageSource: product.coverImageSource,
-            };
-            updatedProducts = [...(cart?.products || []), newItem];
-        }
 
-        const totalPrice = updatedProducts.reduce(
-            (sum, item) => sum + item.price * item.quantity,
-            0
-        );
+            // 5. Escribir a Firestore;
+            await updateDoc(cartRef, {
+                products: updatedProducts,
+                totalPrice,
+                updatedAt: new Date(),
+            });
 
-        await updateDoc(cartRef, {
-            products: updatedProducts,
-            totalPrice,
-            updatedAt: new Date(),
-        });
+            // 6. Actualizar estado local para UI;
+            setCart({
+                ...currentCart,
+                products: updatedProducts,
+                totalPrice,
+                updatedAt: new Date(),
+            });
 
-        await refreshCart();
-        toast.success(`${quantity} producto(s) añadido(s) al carrito`);
+            toast.success(`${quantity} producto(s) añadido(s) al carrito`);
         } catch (error) {
-        toast.error('Error al añadir al carrito');
-        console.error(error);
+            toast.error('Error al añadir al carrito');
+            console.error(error);
         }
     }
 
     async function updateQuantity(productId: string, newQuantity: number) {
         const cartId = localStorage.getItem('cartId');
-        if (!cartId || !cart) return;
+        if (!cartId) return;
 
         try {
-        // Validar límite de 3 items;
-        const otherItemsTotal = cart.products
-            .filter(item => item.productId !== productId)
-            .reduce((sum, item) => sum + item.quantity, 0);
+            // 1. Leer carrito actual desde Firestore;
+            const cartRef = doc(db, 'carts', cartId);
+            const cartDoc = await getDoc(cartRef);
 
-        if (otherItemsTotal + newQuantity > 3) {
-            toast.error('Máximo 3 ítems por compra!');
-            return;
-        }
+            if (!cartDoc.exists()) return;
 
-        const updatedProducts = cart.products.map(item =>
-            item.productId === productId
-            ? { ...item, quantity: newQuantity }
-            : item
-        );
+            const currentCart = { id: cartDoc.id, ...cartDoc.data() } as Cart;
 
-        const totalPrice = updatedProducts.reduce(
-            (sum, item) => sum + item.price * item.quantity,
-            0
-        );
+            // 2. Validar límite de 3 items;
+            const otherItemsTotal = currentCart.products
+                .filter(item => item.productId !== productId)
+                .reduce((sum, item) => sum + item.quantity, 0);
 
-        await updateDoc(doc(db, 'carts', cartId), {
-            products: updatedProducts,
-            totalPrice,
-            updatedAt: new Date(),
-        });
+            if (otherItemsTotal + newQuantity > 3) {
+                toast.error('Máximo 3 ítems por compra!');
+                return;
+            }
 
-        await refreshCart();
+            // 3. Calcular productos actualizados;
+            const updatedProducts = currentCart.products.map(item =>
+                item.productId === productId
+                    ? { ...item, quantity: newQuantity }
+                    : item
+            );
+
+            const totalPrice = updatedProducts.reduce(
+                (sum, item) => sum + item.price * item.quantity,
+                0
+            );
+
+            // 4. Escribir a Firestore;
+            await updateDoc(cartRef, {
+                products: updatedProducts,
+                totalPrice,
+                updatedAt: new Date(),
+            });
+
+            // 5. Actualizar estado local;
+            setCart({
+                ...currentCart,
+                products: updatedProducts,
+                totalPrice,
+                updatedAt: new Date(),
+            });
         } catch (error) {
-        toast.error('Error al actualizar cantidad');
-        console.error(error);
+            toast.error('Error al actualizar cantidad');
+            console.error(error);
         }
     }
 
     async function removeFromCart(productId: string) {
         const cartId = localStorage.getItem('cartId');
-        if (!cartId || !cart) return;
+        if (!cartId) return;
 
         try {
-        const updatedProducts = cart.products.filter(item => item.productId !== productId);
-        const totalPrice = updatedProducts.reduce(
-            (sum, item) => sum + item.price * item.quantity,
-            0
-        );
+            // 1. Leer carrito actual desde Firestore;
+            const cartRef = doc(db, 'carts', cartId);
+            const cartDoc = await getDoc(cartRef);
 
-        await updateDoc(doc(db, 'carts', cartId), {
-            products: updatedProducts,
-            totalPrice,
-            updatedAt: new Date(),
-        });
+            if (!cartDoc.exists()) return;
 
-        await refreshCart();
-        toast.success('Producto eliminado');
+            const currentCart = { id: cartDoc.id, ...cartDoc.data() } as Cart;
+
+            // 2. Calcular productos actualizados;
+            const updatedProducts = currentCart.products.filter(item => item.productId !== productId);
+            const totalPrice = updatedProducts.reduce(
+                (sum, item) => sum + item.price * item.quantity,
+                0
+            );
+
+            // 3. Escribir a Firestore;
+            await updateDoc(cartRef, {
+                products: updatedProducts,
+                totalPrice,
+                updatedAt: new Date(),
+            });
+
+            // 4. Actualizar estado local;
+            setCart({
+                ...currentCart,
+                products: updatedProducts,
+                totalPrice,
+                updatedAt: new Date(),
+            });
+
+            toast.success('Producto eliminado');
         } catch (error) {
-        toast.error('Error al eliminar producto');
-        console.error(error);
+            toast.error('Error al eliminar producto');
+            console.error(error);
         }
     }
 
@@ -208,17 +270,25 @@ export function CartProvider({ children }: { children: ReactNode }) {
         if (!cartId) return;
 
         try {
-        await updateDoc(doc(db, 'carts', cartId), {
-            products: [],
-            totalPrice: 0,
-            updatedAt: new Date(),
-        });
+            const cartRef = doc(db, 'carts', cartId);
 
-        await refreshCart();
-        toast.success('Carrito vaciado');
+            await updateDoc(cartRef, {
+                products: [],
+                totalPrice: 0,
+                updatedAt: new Date(),
+            });
+
+            setCart(prev => prev ? {
+                ...prev,
+                products: [],
+                totalPrice: 0,
+                updatedAt: new Date(),
+            } : null);
+
+            toast.success('Carrito vaciado');
         } catch (error) {
-        toast.error('Error al vaciar carrito');
-        console.error(error);
+            toast.error('Error al vaciar carrito');
+            console.error(error);
         }
     }
 

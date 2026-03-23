@@ -34,10 +34,13 @@
 }
 
 .btn--nav {
-    border: 1px solid transparent;
     width: auto;
     font-size: clamp(1.25rem, 1.2vw, 1.75rem);
+    padding: 0.8rem 1rem;
     text-decoration: none;
+    text-align: center;
+    min-width: 0;
+    flex-shrink: 1;
 }
 
 .btn--danger {
@@ -53,6 +56,7 @@
     display: flex;
     margin: auto;
     justify-content: center;
+    width: 60%;
 }
 
 
@@ -164,7 +168,7 @@
 }
 
 .container{
-    width: 90%;
+    width: 80%;
     max-width: 1200px;
     margin: 0 auto;
     padding: clamp(1rem, 2vw, 2rem);
@@ -199,9 +203,16 @@
     word-break: break-word;
 }
 
-.product-detail-title {
+.product-detail-titles {
     font-size: clamp(2rem, 2vw, 2.5rem);
     margin: 0 auto 0.5rem;
+}
+
+.product-detail-headers {
+    text-align: center;
+    font-size: clamp(1rem, 1.2vw, 1.2rem);
+    letter-spacing: 0.10em;
+    line-height: 1.6;
 }
 
 .product-detail-container {
@@ -221,19 +232,60 @@
     white-space: pre-line;
     font-size: clamp(1rem, 1.2vw, 1.2rem);
     }
-    & .detail-actions {
-        display:flex;
-        flex-wrap:wrap;
-        gap:12px;
-        margin: 0.5rem auto;
-        padding: 0.5rem 1rem;
+}
+
+.detail-actions {
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    margin: 0.5rem auto;
+    padding: 0.5rem 1rem;
+    & .quantity-selector {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        width:100%;
+        & > *{
+            flex:1;
+        }
+        & .qty-btn {
+            border: 1px solid #5b6cff;
+            background: transparent;
+            font-size: 1.5rem;
+            cursor: pointer;
+            text-align: center;
+        }
+        & .qty-value {
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:1.2rem;
+        }
+    }
+    & > .nav-btn,
+    & > .add-to-cart{
+        flex:1;
     }
 }
 
-.product-detail-image{
+.detail-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+
+.product-detail-image {
     position:static;
     max-width: 70%;
     margin: 2rem auto 0;
+    align-self: start;
+    max-width: 80%;
+    margin: 2rem auto 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .product-info {

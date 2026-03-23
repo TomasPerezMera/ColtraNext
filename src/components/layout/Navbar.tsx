@@ -28,7 +28,7 @@ export default function Navbar() {
     return (
         <>
         <nav className="flex items-center justify-between gap-4 py-2.5 px-5 w-[90%] max-w-7xl mx-auto relative">
-            <Link href="/" className="navbar-logo flex items-center justify-center z-[1001]">
+            <Link href="/" className="navbar-logo flex items-center justify-center z-[1001] btn--nav">
                 <Image
                     src="/favicon.ico"
                     alt="Coltrane"
@@ -49,15 +49,18 @@ export default function Navbar() {
             </svg>
             </button>
 
-            <div className={`navbar-menu ${isOpen ? 'right-0' : '-right-full'} fixed top-0 -right-full w-[70%] max-w-[300px] h-screen bg-black/95 backdrop-blur-md flex flex-col gap-6 pt-20 px-8 pb-8 transition-all duration-300 z-[1000] md:static md:right-0 md:w-auto md:h-auto md:flex-row md:bg-transparent md:backdrop-blur-none md:p-0`}>
-            <Link href="/products" className="btn navbar-btn" onClick={closeMenu}>
+            <div className={`navbar-menu ${isOpen ? 'right-0' : '-right-full'} fixed top-0 -right-full w-[70%] max-w-[300px] h-screen bg-black/95 backdrop-blur-md flex flex-col gap-6 pt-20 px-8 pb-8 transition-all duration-300 z-[1000] md:static md:right-0 md:w-auto md:h-auto md:flex-row md:bg-transparent md:backdrop-blur-none md:p-0 md:max-w-full flex-1 md:flex md:justify-end`}>
+            <Link href="/products" className="btn btn--nav" onClick={closeMenu}>
                 Productos
             </Link>
-            <Link href="/profile" className="btn navbar-btn" onClick={closeMenu}>
+            <Link href="/profile" className="btn btn--nav" onClick={closeMenu}>
                 Mi Cuenta
             </Link>
-            <Link href="/cart" className="btn nav-cart-btn navbar-btn" onClick={closeMenu}>
-                🛒 <span className="cart-count">{cartItemCount}</span>
+            <Link href="/cart" className="btn nav-cart-btn btn--nav relative" onClick={closeMenu}>
+                🛒
+                <span className="cart-count absolute -top-1.5 -right-2.5 bg-accent text-white text-xs px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
+                    {cartItemCount}
+                </span>
             </Link>
             </div>
         </nav>

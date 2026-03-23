@@ -31,7 +31,6 @@ export default function ProductDetailPage() {
     }
     load();
     }, [params.slug]);
-    console.log(product);
     if (loading) return <Loading />;
     if (!product) return <NotFound />;
 
