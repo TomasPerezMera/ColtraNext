@@ -4,7 +4,7 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 import { db } from '@/lib/firebase/config';
 import { doc, getDoc, updateDoc, collection, addDoc } from 'firebase/firestore';
 import { Cart, CartItem, Product } from '@/types';
-import toast from 'react-hot-toast';
+import toastHelper from '@/helpers/toastHelper';
 
 interface CartContextType {
     cart: Cart | null;
@@ -16,6 +16,8 @@ interface CartContextType {
     handlePurchase: () => Promise<void>;
     refreshCart: () => Promise<void>;
 }
+
+const toast = toastHelper();
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
@@ -32,7 +34,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
             setCart({ id: cartDoc.id, ...cartDoc.data() } as Cart);
         }
         } catch (error) {
-        console.error('Error loading cart:', error);
+        toast.error("Error: " + error);
         }
     }
 
@@ -62,7 +64,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         setCart({ id: cartDoc.id, ...cartDoc.data() } as Cart);
         }
     } catch (error) {
-        console.error('Error loading cart:', error);
+        toast.error('Error loading cart: ' + error);
     }
     }
 
@@ -95,8 +97,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
             const cartDoc = await getDoc(cartRef);
 
             if (!cartDoc.exists()) {
-                console.error('[addToCart] ERROR: Carrito no existe en Firestore');
-                toast.error('Error: carrito no encontrado');
+                toast.error('Error: carrito no encontrado!');
                 return;
             }
             const currentCart = { id: cartDoc.id, ...cartDoc.data() } as Cart;
@@ -104,7 +105,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
             // 2. Obtener producto de Firestore;
             const productDoc = await getDoc(doc(db, 'products', productId));
             if (!productDoc.exists()) {
-                toast.error('Producto no encontrado');
+                toast.error('Producto no encontrado!');
                 return;
             }
 
@@ -113,8 +114,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
             // 3. Validar límite de 3 items;
             const currentTotal = currentCart.products.reduce((sum, item) => sum + item.quantity, 0);
             if (currentTotal + quantity > 3) {
-                console.warn('🛒 [addToCart] Límite excedido!');
-                toast.error('Máximo 3 ítems por compra!');
+                toast.error('Error - Límite de ítems excedido!');
                 return;
             }
 
@@ -162,10 +162,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
             };
             setCart(newCartState);
 
-            toast.success(`${quantity} producto(s) añadido(s) al carrito`);
+            toast.default(`${quantity} producto(s) añadido(s) al carrito`);
         } catch (error) {
-            toast.error('Error al añadir al carrito');
-            console.error(error);
+            toast.error('Error al añadir al carrito: ' + error);
         }
     }
 
@@ -218,8 +217,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
                 updatedAt: new Date(),
             });
         } catch (error) {
-            toast.error('Error al actualizar cantidad');
-            console.error(error);
+            toast.error('Error al actualizar cantidad: ' + error);
         }
     }
 
@@ -257,10 +255,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
                 updatedAt: new Date(),
             });
 
-            toast.success('Producto eliminado');
+            toast.default('Producto eliminado');
         } catch (error) {
-            toast.error('Error al eliminar producto');
-            console.error(error);
+            toast.error('Error al eliminar producto: ' + error);
         }
     }
 
@@ -284,10 +281,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
                 updatedAt: new Date(),
             } : null);
 
-            toast.success('Carrito vaciado');
+            toast.default('Carrito vaciado');
         } catch (error) {
-            toast.error('Error al vaciar carrito');
-            console.error(error);
+            toast.error('Error al vaciar carrito: ' + error);
         }
     }
 
@@ -297,7 +293,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         // TODO: Actualizar stock de productos;
         clearCart();
 
-        toast.success('Función de compra pendiente de implementar');
+        toast.default('Función de compra pendiente de implementar');
     }
 
     return (

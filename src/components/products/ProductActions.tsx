@@ -13,7 +13,6 @@ export default function ProductActions({ productId, maxStock }: { productId: str
     const increase = () => setQuantity(prev => Math.min(Math.min(maxStock, 3), prev + 1));
 
     const handleAddToCart = async () => {
-        console.log('Agregando:', productId, quantity);
         await addToCart(productId, quantity);
     };
 
