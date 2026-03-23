@@ -9,7 +9,7 @@ export default function CartPage() {
 
     if (!cart || cartItemCount === 0) {
         return (
-        <div className="cart-container container">
+        <div className="cart-container container reverse-gradient-border">
             <h1 className="product-title">Tu Carrito</h1>
             <hr />
             <p className="product-info product-title text-center my-8">Tu carrito está vacío.</p>

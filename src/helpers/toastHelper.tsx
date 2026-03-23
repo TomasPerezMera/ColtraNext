@@ -1,4 +1,5 @@
 import { toast } from 'react-toastify';
+import { Slide } from 'react-toastify';
 
 export default function toastHelper() {
     return {
@@ -14,7 +15,9 @@ export default function toastHelper() {
             closeOnClick: true,
             pauseOnHover: true,
             hideProgressBar: true,
-            theme: "dark"
+            theme: "dark",
+            transition: Slide,
+            autoClose: 1500,
             }),
         error: (msg: string) => toast.error(msg, {
             style: {
@@ -28,7 +31,9 @@ export default function toastHelper() {
             closeOnClick: true,
             pauseOnHover: true,
             hideProgressBar: true,
-            theme: "colored"
+            theme: "colored",
+            transition: Slide,
+            autoClose: 2000,
             }),
     };
 }

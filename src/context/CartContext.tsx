@@ -5,6 +5,8 @@ import { db } from '@/lib/firebase/config';
 import { doc, getDoc, updateDoc, collection, addDoc } from 'firebase/firestore';
 import { Cart, CartItem, Product } from '@/types';
 import toastHelper from '@/helpers/toastHelper';
+import { auth } from '@/lib/firebase/config';
+
 
 interface CartContextType {
     cart: Cart | null;
@@ -64,7 +66,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         setCart({ id: cartDoc.id, ...cartDoc.data() } as Cart);
         }
     } catch (error) {
-        toast.error('Error loading cart: ' + error);
+        toast.error('Error cargando el carrito: ' + error);
     }
     }
 
@@ -105,7 +107,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
             // 2. Obtener producto de Firestore;
             const productDoc = await getDoc(doc(db, 'products', productId));
             if (!productDoc.exists()) {
-                toast.error('Producto no encontrado!');
+                toast.error('Error: Producto no encontrado!');
                 return;
             }
 
@@ -162,7 +164,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
             };
             setCart(newCartState);
 
-            toast.default(`${quantity} producto(s) añadido(s) al carrito`);
+            toast.default(`${quantity} producto(s) añadido(s) al carrito!`);
         } catch (error) {
             toast.error('Error al añadir al carrito: ' + error);
         }
@@ -255,7 +257,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
                 updatedAt: new Date(),
             });
 
-            toast.default('Producto eliminado');
+            toast.default('Producto Eliminado!');
         } catch (error) {
             toast.error('Error al eliminar producto: ' + error);
         }
@@ -281,19 +283,46 @@ export function CartProvider({ children }: { children: ReactNode }) {
                 updatedAt: new Date(),
             } : null);
 
-            toast.default('Carrito vaciado');
+            toast.default('Carrito Vaciado!');
         } catch (error) {
             toast.error('Error al vaciar carrito: ' + error);
         }
     }
 
     async function handlePurchase() {
-        // TODO: Verificar autenticación;
-        // TODO: Crear ticket en Firestore;
-        // TODO: Actualizar stock de productos;
-        clearCart();
+        // Check Auth del usuario;
+        const user = auth.currentUser;
+        if (!user) {
+            toast.error('Iniciá sesión para comprar');
+            window.location.href = '/login';
+            return;
+        }
+        if (!cart || cart.products.length === 0) {
+            toast.error('Carrito vacío');
+            return;
+        }
+        try {
+            // Crear ticket;
+            const ticket = {
+            code: `TICKET-${Date.now()}`,
+            purchaseDateTime: new Date(),
+            amount: cart.totalPrice,
+            purchaserEmail: user.email,
+            products: cart.products,
+            status: 'completed',
+            };
+            await addDoc(collection(db, 'tickets'), ticket);
 
-        toast.default('Función de compra pendiente de implementar');
+            // TODO: Actualizar stock.
+
+            // Vaciar carrito;
+            await clearCart();
+            toast.default(`¡Compra exitosa! Ticket: ${ticket.code}`);
+            window.location.href = '/products';
+        } catch (error) {
+            toast.error('Error procesando compra');
+            console.error(error);
+        }
     }
 
     return (
