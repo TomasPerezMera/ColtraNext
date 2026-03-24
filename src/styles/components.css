@@ -46,6 +46,10 @@
 .btn--danger {
     border-color: #d32f2f;
     color: #fe4e4e;
+    margin: 5px auto;
+    width: 60%;
+    padding: .5rem;
+    display: inline-flex;
     &:hover {
         background: rgba(211, 47, 47, 0.1);
         box-shadow: 0 0 10px rgba(211, 47, 47, 0.5);
@@ -72,8 +76,8 @@
 
 .auth-card {
     width: 100%;
-    max-width: 500px;
-    padding: 2rem;
+    max-width: 600px;
+    padding: 1rem;
     margin: 0 auto;
 }
 
@@ -182,6 +186,14 @@
     letter-spacing: 0.15em;
     font-weight: 500;
     line-height: 1.2;
+}
+
+.info-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem;
+    margin: 0 auto;
 }
 
 
