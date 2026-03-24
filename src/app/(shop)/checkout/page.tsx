@@ -6,6 +6,10 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase/config';
 import Link from 'next/link';
 import { Ticket } from '@/types';
+import toastHelper from '@/helpers/toastHelper';
+import router from 'next/router';
+
+const toast = toastHelper();
 
 
 export default function CheckoutPage() {
@@ -20,7 +24,12 @@ export default function CheckoutPage() {
 
         const ticketDoc = await getDoc(doc(db, 'tickets', ticketId));
         if (ticketDoc.exists()) {
-            setTicket(ticketDoc.data() as Ticket);
+            setTicket({ id: ticketDoc.id, ...(ticketDoc.data() as Omit<Ticket, "id">) });
+        }
+        if (!ticketDoc.exists()) {
+            toast.error("Error - Ticket ID No Existe!")
+            toast.error("Redirigiendo...")
+            setTimeout(() => { router.push(`/products`) }, 2000);
         }
         setLoading(false);
         }
@@ -28,11 +37,18 @@ export default function CheckoutPage() {
     }, [ticketId]);
 
     if (loading) return <div className="container">Cargando...</div>;
-    if (!ticket) return <div className="container">Ticket no encontrado!</div>;
+    if (!ticket) return(
+        <>
+            <div className="container">Ticket no encontrado!</div>
+            <Link href="/products" className="btn" aria-label="Regresar al Catálogo">
+                Regresar al Catálogo
+            </Link>
+        </>
+    )
 
     return (
         <div className="auth-container">
-            <div className="auth-card">
+            <div className="auth-card reverse-gradient-border">
                 <h1 className="auth-title">Compra Exitosa!</h1>
 
                 <div className="product-info">

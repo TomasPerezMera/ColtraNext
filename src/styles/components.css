@@ -162,6 +162,15 @@
     box-shadow: 0 0 15px rgba(120,90,255,0.2);
 }
 
+.danger-gradient-border {
+    border-radius: 12px;
+    border: 2px solid transparent;
+    background:
+        linear-gradient(#000,#000) padding-box,
+        linear-gradient(to right, #d32f2f, #fe4e4e) border-box;
+    box-shadow: 0 0 15px rgba(120,90,255,0.2);
+}
+
 .hover-vinyl {
     &:hover {
         box-shadow: 0 10px 25px rgba(90,80,255,0.25);

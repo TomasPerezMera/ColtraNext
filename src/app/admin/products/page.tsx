@@ -23,6 +23,7 @@ export default function AdminProductsPage() {
         description: '',
         currentPrice: 0,
         stock: 0,
+        slug: '',
         category: 'Jazz',
         coverImageSource: '',
     });
@@ -80,13 +81,14 @@ export default function AdminProductsPage() {
             createdAt: new Date(),
         });
 
-        toast.default('Producto creado');
+        toast.default('Producto Creado!');
         setFormData({
             name: '',
             artist: '',
             description: '',
             currentPrice: 0,
             stock: 0,
+            slug: '',
             category: 'Jazz',
             coverImageSource: '',
         });
@@ -101,7 +103,7 @@ export default function AdminProductsPage() {
 
         try {
         await deleteDoc(doc(db, 'products', id));
-        toast.default('Producto eliminado');
+        toast.default('Producto Eliminado!');
         loadProducts();
         } catch (error) {
         toast.error('Error al eliminar ' + error);
@@ -113,8 +115,8 @@ export default function AdminProductsPage() {
             <h1 className="auth-title">Admin - Productos</h1>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 my-8">
-                <div className="auth-card">
-                <h2 className="text-2xl mb-4">Crear Producto</h2>
+                <div className="auth-card reverse-gradient-border h-fit">
+                <h2 className="product-title my-4">Crear Producto</h2>
 
                 <form onSubmit={handleSubmit} className="auth-form">
                     <div className="form-group">
@@ -173,6 +175,17 @@ export default function AdminProductsPage() {
                     </div>
 
                     <div className="form-group">
+                    <label>Slug</label>
+                    <input
+                        type="text"
+                        value={formData.slug}
+                        onChange={(e) => setFormData({...formData, slug: e.target.value})}
+                        className="form-input"
+                        required
+                    />
+                    </div>
+
+                    <div className="form-group">
                     <label>Categoría</label>
                     <select
                         value={formData.category}
@@ -202,15 +215,15 @@ export default function AdminProductsPage() {
                 </form>
                 </div>
 
-                <div>
-                    <h2 className="text-2xl mb-4">Productos Existentes</h2>
+                <div className='gradient-border px-4'>
+                    <h2 className="product-title my-2">Productos Existentes</h2>
                     {products.map(product => (
-                        <div key={product.id} className="product-card mb-4">
-                        <h3>{product.name}</h3>
+                        <div key={product.id} className="product-card danger-gradient-border mx-auto p-1 text-center gap-0">
+                        <h3 className='text-violet font-bold'>{product.name}</h3>
                         <p>Stock: {product.stock}</p>
                         <button
                             onClick={() => handleDelete(product.id)}
-                            className="btn btn--danger mt-2"
+                            className="btn btn--danger p-1 my-1 min-h-1"
                         >
                             Eliminar
                         </button>

@@ -2,10 +2,11 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { db } from '@/lib/firebase/config';
-import { doc, getDoc, updateDoc, collection, addDoc } from 'firebase/firestore';
-import { Cart, CartItem, Product, Ticket } from '@/types';
+import { doc, getDoc, updateDoc, collection, addDoc, runTransaction, DocumentReference  } from 'firebase/firestore';
+import { Cart, CartItem, Product } from '@/types';
 import toastHelper from '@/helpers/toastHelper';
 import { auth } from '@/lib/firebase/config';
+import router from 'next/router';
 
 
 interface CartContextType {
@@ -290,7 +291,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
 
     async function handlePurchase() {
-        // Check Auth del usuario;
         const user = auth.currentUser;
         if (!user) {
             toast.error('Iniciá sesión para comprar');
@@ -302,31 +302,97 @@ export function CartProvider({ children }: { children: ReactNode }) {
             return;
         }
         try {
-            // Crear ticket;
-            const ticket: Omit<Ticket, 'id'> = {
-            code: `TICKET-${Date.now()}`,
-            purchaseDateTime: new Date(),
-            amount: cart.totalPrice,
-            purchaserEmail: user.email!,
-            products: cart.products.map(item => ({
-                name: item.name,
+            await runTransaction(db, async (transaction) => {
+            // 1. Verificar stock de todos los productos
+            for (const item of cart.products) {
+                const productRef = doc(db, "products", item.productId);
+                const productSnap = await transaction.get(productRef);
+
+                if (!productSnap.exists()) {
+                throw new Error(`Producto no existe: ${item.name}`);
+                }
+
+                const data = productSnap.data();
+                if (data.stock < item.quantity) {
+                throw new Error(`Stock insuficiente para ${item.name}`);
+                }
+            }
+
+            // 2. Reducir stock
+            for (const item of cart.products) {
+                const productRef = doc(db, "products", item.productId);
+                const productSnap = await transaction.get(productRef);
+
+                const data = productSnap.data() as { stock: number };
+                const currentStock = data.stock;
+
+                transaction.update(productRef, {
+                stock: currentStock - item.quantity,
+                });
+            }
+
+            // 3. Crear ticket de la transacción
+            let ticketId = "";
+
+            await runTransaction(db, async (transaction) => {
+            const productsData = new Map<
+                string,
+                { ref: DocumentReference; stock: number; quantity: number }
+            >();
+
+            // 1. READS (todos juntos)
+            for (const item of cart.products) {
+                const ref = doc(db, "products", item.productId);
+                const snap = await transaction.get(ref);
+
+                if (!snap.exists()) {
+                throw new Error(`Producto no existe: ${item.name}`);
+                }
+
+                const data = snap.data() as { stock: number };
+
+                if (data.stock < item.quantity) {
+                throw new Error(`Stock insuficiente: ${item.name}`);
+                }
+
+                productsData.set(item.productId, {
+                ref,
+                stock: data.stock,
                 quantity: item.quantity,
-                price: item.price,
-            })),
-            };
-            await addDoc(collection(db, 'tickets'), ticket);
+                });
+            }
 
-            // TODO: Actualizar stock.
+            // 2. WRITES (sin más gets)
+            for (const [, value] of productsData) {
+                transaction.update(value.ref, {
+                stock: value.stock - value.quantity,
+                });
+            }
 
-            // Vaciar carrito;
+            const ticketRef = doc(collection(db, "tickets"));
+            ticketId = ticketRef.id;
+
+            transaction.set(ticketRef, {
+                code: `TICKET-${Date.now()}`,
+                purchaseDateTime: new Date(),
+                amount: cart.totalPrice,
+                purchaserEmail: user.email!,
+                products: cart.products.map(item => ({
+                    name: item.name,
+                    quantity: item.quantity,
+                    price: item.price,
+                    })),
+                });
+            });
+
+            // Luego de la transacción;
             await clearCart();
-            toast.default(`¡Compra exitosa! Ticket: ${ticket.code}`);
-            window.location.href = '/products';
-        } catch (error) {
-            toast.error('Error procesando compra');
-            console.error(error);
+            toast.default('Compra exitosa!');
+            router.push(`/checkout?ticket=${ticketId}`);
+        })} catch (error) {
+            toast.error('Error procesando compra: ' + error);
+            }
         }
-    }
 
     return (
         <CartContext.Provider

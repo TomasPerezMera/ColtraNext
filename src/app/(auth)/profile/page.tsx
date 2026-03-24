@@ -58,14 +58,14 @@ export default function ProfilePage() {
             <h1 className="header-title my-0">Mi Perfil</h1>
             <hr />
             <div className="auth-card">
-                <section className="info-block reverse-gradient-border my-4">
+                <section className="info-block gradient-border my-4">
                     <h2 className="profile-section-title product-title my-1">Información Personal</h2>
                         <p><strong>Nombre: </strong>{userData.firstName} {userData.lastName}</p>
                         <p><strong>Email: </strong>{userData.email}</p>
                         {userData.age && <p><strong>Edad:</strong> {userData.age}</p>}
                         <p><strong>Rol: </strong>{userData.role}</p>
                 </section>
-                <section className="profile-actions info-block gradient-border my-4">
+                <section className="profile-actions info-block reverse-gradient-border my-4">
                     <button onClick={handleLogout} className="btn btn--danger">
                         Cerrar sesión
                     </button>
