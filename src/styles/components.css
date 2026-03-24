@@ -232,6 +232,7 @@
     margin: 5px auto;
     padding: 20px;
     border: 3px solid transparent;
+    width: 100%;
     & a {
         background:
         linear-gradient(#000,#000) padding-box,

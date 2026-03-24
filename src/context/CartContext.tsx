@@ -3,7 +3,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { db } from '@/lib/firebase/config';
 import { doc, getDoc, updateDoc, collection, addDoc } from 'firebase/firestore';
-import { Cart, CartItem, Product } from '@/types';
+import { Cart, CartItem, Product, Ticket } from '@/types';
 import toastHelper from '@/helpers/toastHelper';
 import { auth } from '@/lib/firebase/config';
 
@@ -303,13 +303,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
         }
         try {
             // Crear ticket;
-            const ticket = {
+            const ticket: Omit<Ticket, 'id'> = {
             code: `TICKET-${Date.now()}`,
             purchaseDateTime: new Date(),
             amount: cart.totalPrice,
-            purchaserEmail: user.email,
-            products: cart.products,
-            status: 'completed',
+            purchaserEmail: user.email!,
+            products: cart.products.map(item => ({
+                name: item.name,
+                quantity: item.quantity,
+                price: item.price,
+            })),
             };
             await addDoc(collection(db, 'tickets'), ticket);
 

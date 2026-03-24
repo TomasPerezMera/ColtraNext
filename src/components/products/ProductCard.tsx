@@ -20,7 +20,6 @@ export default function ProductCard({ product }: { product: Product }) {
             <h2 className="product-title">
                 {product.name}
             </h2>
-            <p className="product-detail-headers">Artista: {product.artist}</p>
             <p className="product-detail-headers">Precio: ${product.currentPrice}</p>
         </div>
 

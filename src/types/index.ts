@@ -48,6 +48,9 @@ export interface Ticket {
     purchaseDateTime: Date;
     amount: number;
     purchaserEmail: string;
-    products: CartItem[];
-    status: 'pending' | 'completed' | 'cancelled';
+    products: Array<{
+        name: string;
+        quantity: number;
+        price: number;
+    }>
 }
