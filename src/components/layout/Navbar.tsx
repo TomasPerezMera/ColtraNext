@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { auth, db } from '@/lib/firebase/config';
+import { doc, getDoc } from 'firebase/firestore';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useCart } from '@/context/CartContext';
@@ -8,9 +10,26 @@ import { useCart } from '@/context/CartContext';
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
     const { cartItemCount } = useCart();
+    const [userName, setUserName] = useState<string | null>(null);
 
     const toggleMenu = () => setIsOpen(!isOpen);
     const closeMenu = () => setIsOpen(false);
+
+    useEffect(() => {
+        // Header personalizado de bienvenida al usuario;
+        const unsubscribe = auth.onAuthStateChanged(async (user) => {
+        if (user) {
+            const userDoc = await getDoc(doc(db, 'users', user.uid));
+            if (userDoc.exists()) {
+            setUserName(userDoc.data().firstName);
+            }
+        } else {
+            setUserName(null);
+        }
+        });
+        return () => unsubscribe();
+    }, []);
+
 
     useEffect(() => {
         // Bloquear scroll cuando el menú está abierto;
@@ -38,6 +57,10 @@ export default function Navbar() {
                     className='h-10 w-auto object-contain transition-transform duration-200 hover:scale-105'
                 />
             </Link>
+
+            {userName && (
+                <span>Hola, <span className="text-accent font-bold">{userName}</span> !</span>
+            )}
 
             <button
             className={`hamburger ${isOpen ? 'active' : ''} flex flex-col gap-1.5 bg-transparent border-none cursor-pointer p-2 z-[1001] md:hidden` }

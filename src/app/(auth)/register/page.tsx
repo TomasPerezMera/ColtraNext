@@ -33,9 +33,9 @@ export default function RegisterPage() {
             createdAt: new Date(),
         });
 
-        toast.success('¡Cuenta creada!');
+        toast.success('Cuenta creada!');
         router.push('/products');
-        } catch (error: unknown) {
+        } catch (error) {
         toast.error('Error al registrarse: ' + error);
         } finally {
         setLoading(false);

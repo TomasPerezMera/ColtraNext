@@ -20,7 +20,7 @@ export default function LoginPage() {
 
         try {
         await signInWithEmailAndPassword(auth, email, password);
-        toast.success('¡Bienvenido!');
+        toast.success('Bienvenido!');
         router.push('/products');
         } catch (error) {
         toast.error('Credenciales inválidas!' + error);
