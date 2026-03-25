@@ -7,6 +7,8 @@ import { signOut } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import toastHelper from '@/helpers/toastHelper';
 import Link from 'next/link';
+import Loading from '@/components/layout/loading';
+import NotFound from '@/components/layout/not-found';
 
 const toast = toastHelper();
 
@@ -50,8 +52,8 @@ export default function ProfilePage() {
         }
     }
 
-    if (loading) return <div className="container">Cargando perfil...</div>;
-    if (!userData) return null;
+    if (loading) return <Loading />;
+    if (!userData) return <NotFound />;
 
     return(
         <div className="auth-container container grid grid-cols-1 my-2 w-full md:w-auto">

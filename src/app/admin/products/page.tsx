@@ -221,12 +221,16 @@ export default function AdminProductsPage() {
                         <div key={product.id} className="product-card danger-gradient-border mx-auto p-1 text-center gap-0">
                         <h3 className='text-violet font-bold'>{product.name}</h3>
                         <p>Stock: {product.stock}</p>
-                        <button
-                            onClick={() => handleDelete(product.id)}
-                            className="btn btn--danger p-1 my-1 min-h-1"
-                        >
-                            Eliminar
-                        </button>
+                        <div className="flex gap-2 mt-2">
+                            <button
+                                onClick={() => router.push(`/admin/products/${product.id}`)}
+                                className="btn gradient-border"
+                            >Editar</button>
+                            <button
+                                onClick={() => handleDelete(product.id)}
+                                className="btn btn--danger p-1 my-1 min-h-1"
+                            >Eliminar</button>
+                        </div>
                         </div>
                     ))}
                 </div>

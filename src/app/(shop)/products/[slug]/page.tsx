@@ -6,8 +6,8 @@ import { db } from '@/lib/firebase/config';
 import { collection, getDocs } from 'firebase/firestore';
 import type { Product } from '@/types';
 import ProductDetail from '@/components/products/ProductDetail';
-import NotFound from './not-found';
-import Loading from './loading';
+import NotFound from '../../../../components/layout/not-found';
+import Loading from '../../../../components/layout/loading';
 
 
 export default function ProductDetailPage() {

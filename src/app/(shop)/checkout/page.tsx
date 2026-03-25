@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { Ticket } from '@/types';
 import toastHelper from '@/helpers/toastHelper';
 import router from 'next/router';
+import Loading from '@/components/layout/loading';
 
 const toast = toastHelper();
 
@@ -36,7 +37,7 @@ export default function CheckoutPage() {
         loadTicket();
     }, [ticketId]);
 
-    if (loading) return <div className="container">Cargando...</div>;
+    if (loading) return <Loading />;
     if (!ticket) return(
         <>
             <div className="container">Ticket no encontrado!</div>

@@ -5,6 +5,7 @@ import { collection, getDocs } from 'firebase/firestore';
 import ProductCard from '@/components/products/ProductCard';
 import { Product } from '@/types';
 import { useEffect, useState } from 'react';
+import Loading from '@/components/layout/loading';
 
 
 export default function ProductsPage() {
@@ -29,7 +30,7 @@ useEffect(() => {
         load();
     }, []);
 
-    if (loading) return <div>Cargando...</div>;
+    if (loading) return <Loading />;
     return (
         <section className="product-catalog py-8">
             <h1

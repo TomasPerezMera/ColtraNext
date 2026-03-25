@@ -303,7 +303,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         }
         try {
             await runTransaction(db, async (transaction) => {
-            // 1. Verificar stock de todos los productos
+            // Verificar stock de todos los productos
             for (const item of cart.products) {
                 const productRef = doc(db, "products", item.productId);
                 const productSnap = await transaction.get(productRef);
@@ -318,20 +318,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
                 }
             }
 
-            // 2. Reducir stock
-            for (const item of cart.products) {
-                const productRef = doc(db, "products", item.productId);
-                const productSnap = await transaction.get(productRef);
-
-                const data = productSnap.data() as { stock: number };
-                const currentStock = data.stock;
-
-                transaction.update(productRef, {
-                stock: currentStock - item.quantity,
-                });
-            }
-
-            // 3. Crear ticket de la transacción
+            // Crear ticket de la transacción
             let ticketId = "";
 
             await runTransaction(db, async (transaction) => {
@@ -340,7 +327,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
                 { ref: DocumentReference; stock: number; quantity: number }
             >();
 
-            // 1. READS (todos juntos)
+            // Reads;
             for (const item of cart.products) {
                 const ref = doc(db, "products", item.productId);
                 const snap = await transaction.get(ref);
@@ -362,7 +349,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
                 });
             }
 
-            // 2. WRITES (sin más gets)
+            // Writes;
             for (const [, value] of productsData) {
                 transaction.update(value.ref, {
                 stock: value.stock - value.quantity,
