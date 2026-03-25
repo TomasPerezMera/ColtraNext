@@ -6,7 +6,6 @@ import { doc, getDoc, updateDoc, collection, addDoc, runTransaction, DocumentRef
 import { Cart, CartItem, Product } from '@/types';
 import toastHelper from '@/helpers/toastHelper';
 import { auth } from '@/lib/firebase/config';
-import router from 'next/router';
 
 
 interface CartContextType {
@@ -375,7 +374,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
             // Luego de la transacción;
             await clearCart();
             toast.default('Compra exitosa!');
-            router.push(`/checkout?ticket=${ticketId}`);
+            window.location.href = `/checkout?ticket=${ticketId}`;
         })} catch (error) {
             toast.error('Error procesando compra: ' + error);
             }

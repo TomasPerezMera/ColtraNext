@@ -50,6 +50,7 @@
     width: 60%;
     padding: .5rem;
     display: inline-flex;
+    justify-content: center;
     &:hover {
         background: rgba(211, 47, 47, 0.1);
         box-shadow: 0 0 10px rgba(211, 47, 47, 0.5);
@@ -225,7 +226,7 @@
     }
 }
 
-.container{
+.container {
     width: 80%;
     max-width: 1200px;
     margin: 0 auto;

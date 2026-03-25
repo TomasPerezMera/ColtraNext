@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase/firestore";
+
 export interface Product {
     id: string;
     name: string;
@@ -45,7 +47,7 @@ export interface CartItem {
 export interface Ticket {
     id: string;
     code: string;
-    purchaseDateTime: Date;
+    purchaseDateTime: Timestamp;
     amount: number;
     purchaserEmail: string;
     products: Array<{

@@ -50,13 +50,16 @@ export default function CheckoutPage() {
     return (
         <div className="auth-container">
             <div className="auth-card reverse-gradient-border">
-                <h1 className="auth-title">Compra Exitosa!</h1>
+                <h1 className="product-title">Compra Exitosa!</h1>
 
                 <div className="product-info">
                 <p><strong>Código: </strong>{ticket.code}</p>
                 <p><strong>Email: </strong>{ticket.purchaserEmail}</p>
                 <p><strong>Total: </strong>${ticket.amount}</p>
-                <p><strong>Fecha: </strong>{ticket.purchaseDateTime.toLocaleString()}</p>
+                <p><strong>Fecha: </strong>{ticket.purchaseDateTime.toDate().toLocaleDateString("es-ES", {
+                    day: "numeric",
+                    month: "numeric",
+                    year: "numeric",})}</p>
 
                 <hr className="my-4" />
 
@@ -69,7 +72,7 @@ export default function CheckoutPage() {
                 </div>
 
                 <div className="form-actions">
-                    <Link href="/products" className="btn gradient-border">
+                    <Link href="/products" className="btn gradient-border my-6">
                         Volver al catálogo
                     </Link>
                 </div>

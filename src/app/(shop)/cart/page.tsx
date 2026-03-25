@@ -23,12 +23,12 @@ export default function CartPage() {
         <h1 className="product-title">Tu Carrito</h1>
         <hr />
         <CartList items={cart.products} />
-        <div className="cart-total product-info mt-8 p-6">
+        <div className="cart-total product-info my-8 p-6 text-center">
             <h2 className="text-xl md:text-2xl mb-4">Total de ítems: {cartItemCount}</h2>
             <h2 className="text-xl md:text-2xl mb-4">Total a pagar: ${cart.totalPrice.toLocaleString()}</h2>
-            <div className="flex flex-wrap gap-4 mt-4">
-            <button onClick={clearCart} className="btn gradient-border">Vaciar Carrito</button>
-            <button onClick={handlePurchase} className="btn gradient-border">Realizar Compra</button>
+            <div className="grid grid-cols-2 gap-8 my-4">
+                <button onClick={clearCart} className="btn btn--danger bg-black">Vaciar Carrito</button>
+                <button onClick={handlePurchase} className="btn gradient-border">Realizar Compra</button>
             </div>
         </div>
         </div>
