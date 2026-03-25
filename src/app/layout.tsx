@@ -8,7 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 export const metadata: Metadata = {
     title: 'El Rincón de Coltrane',
-    description: 'Vinilos de Jazz Legendarios!',
+    description: 'Vinilos de Jazz y Blues Legendarios!',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

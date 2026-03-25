@@ -1,15 +1,9 @@
 # ColtraNext
 
-An iteration of "El Rincón de Coltrane" E-Commerce project developed with NextJs.
+Modernización del E-Commerce "El Rincón de Coltrane" utilizando NextJs como motor.
+
+Comando para levantar la aplicación:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.

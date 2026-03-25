@@ -1,13 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase/config';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import toast from 'react-hot-toast';
+import toastHelper from '@/helpers/toastHelper';
 
+const toast = toastHelper();
 
 export default function RegisterPage() {
     const router = useRouter();
@@ -33,7 +34,7 @@ export default function RegisterPage() {
             createdAt: new Date(),
         });
 
-        toast.success('Cuenta creada!');
+        toast.default('Cuenta creada!');
         router.push('/products');
         } catch (error) {
         toast.error('Error al registrarse: ' + error);
@@ -42,9 +43,35 @@ export default function RegisterPage() {
         }
     }
 
+    async function handleGoogleLogin() {
+        setLoading(true);
+        try {
+            const provider = new GoogleAuthProvider();
+            const result = await signInWithPopup(auth, provider);
+
+            const userDoc = await getDoc(doc(db, 'users', result.user.uid));
+            if (!userDoc.exists()) {
+            await setDoc(doc(db, 'users', result.user.uid), {
+                email: result.user.email,
+                firstName: result.user.displayName?.split(' ')[0] || 'Usuario',
+                lastName: result.user.displayName?.split(' ')[1] || '',
+                role: 'user',
+                createdAt: new Date(),
+            });
+            }
+
+            toast.default('Cuenta creada con éxito!');
+            router.push('/products');
+        } catch (error) {
+            toast.error('Error con Google: ' + error);
+        } finally {
+            setLoading(false);
+            }
+        }
+
     return (
         <div className="auth-container">
-            <div className="auth-card reverse-gradient-border">
+            <div className="auth-card gradient-border">
                 <h1 className="auth-title">Registrarse</h1>
 
                 <form onSubmit={handleSubmit} className="auth-form">
@@ -99,10 +126,20 @@ export default function RegisterPage() {
                     </button>
                 </div>
                 </form>
-
+                <hr className='h-1' />
                 <div className="auth-alternative">
-                <p>¿Ya tenés cuenta?</p>
-                <Link href="/login" className="btn">Iniciar Sesión</Link>
+                    <div>
+                        <p>O continuar con:</p>
+                        <button
+                            onClick={handleGoogleLogin}
+                            disabled={loading}
+                            className="btn"
+                        >Google</button>
+                    </div>
+                    <div>
+                        <p>¿Ya tenés cuenta?</p>
+                        <Link href="/login" className="btn">Iniciar Sesión</Link>
+                    </div>
                 </div>
             </div>
         </div>

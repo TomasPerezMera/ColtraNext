@@ -94,7 +94,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         }
 
         try {
-            // 1. Leer carrito actual desde Firestore;
+            // Leer carrito actual desde Firestore;
             const cartRef = doc(db, 'carts', cartId);
             const cartDoc = await getDoc(cartRef);
 
@@ -104,7 +104,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
             }
             const currentCart = { id: cartDoc.id, ...cartDoc.data() } as Cart;
 
-            // 2. Obtener producto de Firestore;
+            // Obtener producto de Firestore;
             const productDoc = await getDoc(doc(db, 'products', productId));
             if (!productDoc.exists()) {
                 toast.error('Error: Producto no encontrado!');
@@ -113,14 +113,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
             const product = { id: productDoc.id, ...productDoc.data() } as Product;
 
-            // 3. Validar límite de 3 items;
+            // Validar límite de 3 items;
             const currentTotal = currentCart.products.reduce((sum, item) => sum + item.quantity, 0);
             if (currentTotal + quantity > 3) {
                 toast.error('Error - Límite de ítems excedido!');
                 return;
             }
 
-            // 4. Calcular productos actualizados;
+            // Calcular productos actualizados;
             const existingItem = currentCart.products.find(item => item.productId === productId);
             let updatedProducts: CartItem[];
 
@@ -148,14 +148,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
                 0
             );
 
-            // 5. Escribir a Firestore;
+            // Escribir a Firestore;
             await updateDoc(cartRef, {
                 products: updatedProducts,
                 totalPrice,
                 updatedAt: new Date(),
             });
 
-            // 6. Actualizar estado local para UI;
+            // Actualizar estado local para el display;
             const newCartState = {
                 ...currentCart,
                 products: updatedProducts,
@@ -175,14 +175,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
         if (!cartId) return;
 
         try {
-            // 1. Leer carrito actual desde Firestore;
+            // Leer carrito actual desde Firestore;
             const cartRef = doc(db, 'carts', cartId);
             const cartDoc = await getDoc(cartRef);
             if (!cartDoc.exists()) return;
 
             const currentCart = { id: cartDoc.id, ...cartDoc.data() } as Cart;
 
-            // 2. Validar límite de 3 items;
+            // Validar límite de 3 items;
             const otherItemsTotal = currentCart.products
                 .filter(item => item.productId !== productId)
                 .reduce((sum, item) => sum + item.quantity, 0);
@@ -192,7 +192,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
                 return;
             }
 
-            // 3. Calcular productos actualizados;
+            // Calcular productos actualizados;
             const updatedProducts = currentCart.products.map(item =>
                 item.productId === productId
                     ? { ...item, quantity: newQuantity }
@@ -204,14 +204,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
                 0
             );
 
-            // 4. Escribir a Firestore;
+            // Escribir a Firestore;
             await updateDoc(cartRef, {
                 products: updatedProducts,
                 totalPrice,
                 updatedAt: new Date(),
             });
 
-            // 5. Actualizar estado local;
+            // Actualizar estado local;
             setCart({
                 ...currentCart,
                 products: updatedProducts,
@@ -228,28 +228,28 @@ export function CartProvider({ children }: { children: ReactNode }) {
         if (!cartId) return;
 
         try {
-            // 1. Leer carrito actual desde Firestore;
+            // Leer carrito actual desde Firestore;
             const cartRef = doc(db, 'carts', cartId);
             const cartDoc = await getDoc(cartRef);
             if (!cartDoc.exists()) return;
 
             const currentCart = { id: cartDoc.id, ...cartDoc.data() } as Cart;
 
-            // 2. Calcular productos actualizados;
+            // Calcular productos actualizados;
             const updatedProducts = currentCart.products.filter(item => item.productId !== productId);
             const totalPrice = updatedProducts.reduce(
                 (sum, item) => sum + item.price * item.quantity,
                 0
             );
 
-            // 3. Escribir a Firestore;
+            // Escribir a Firestore;
             await updateDoc(cartRef, {
                 products: updatedProducts,
                 totalPrice,
                 updatedAt: new Date(),
             });
 
-            // 4. Actualizar estado local;
+            // Actualizar estado local;
             setCart({
                 ...currentCart,
                 products: updatedProducts,
