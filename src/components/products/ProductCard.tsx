@@ -21,9 +21,8 @@ export default function ProductCard({ product }: { product: Product }) {
             <h2 className="product-title">
                 {product.name}
             </h2>
-            <p className="product-detail-headers">Precio: ${product.currentPrice}</p>
         </div>
-
+        <p className="product-price mb-6">${product.currentPrice.toLocaleString()}</p>
         <Link href={`/products/${product.slug}`} className="btn gradient-border">
             Ver detalle
         </Link>

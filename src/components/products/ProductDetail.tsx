@@ -22,10 +22,12 @@ export default function ProductDetail({ product }: { product: Product }) {
                     {product.name}
                 </h1>
                 <div className="product-detail-headers">
-                    <p ><strong>Artista:</strong> {product.artist}</p>
-                    <p><strong>Precio:</strong><span className="product-price"> ${product.currentPrice}</span></p>
-                    <p><strong>Categoría:</strong> {product.category}</p>
-                    <p><strong>Stock:</strong> {product.stock} unidades</p>
+                    <p ><strong>Artista: </strong>{product.artist}</p>
+                    <p><strong>Precio: </strong>
+                        <span className="product-price">${product.currentPrice.toLocaleString()}</span>
+                    </p>
+                    <p><strong>Categoría: </strong>{product.category}</p>
+                    <p><strong>Stock: </strong>{product.stock} unidades</p>
                 </div>
                 <div className="product-info">
                     <p>

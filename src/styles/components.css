@@ -358,6 +358,14 @@
 }
 
 .product-price {
-    color:var(--color-accent);
-    font-weight: bold;
+    font-size: clamp(1.5rem, 1.2vw, 2rem);
+    color: #fff;
+    text-align: center;
+    margin: 1rem auto;
+    text-shadow:
+        0 0 6px rgba(255,255,255,0.6),
+        0 0 12px rgba(66,135,245,0.6);
+    letter-spacing: .15em;
+    font-weight: 500;
+    line-height: 1.2;
 }
