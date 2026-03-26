@@ -5,6 +5,12 @@ Modernización del E-Commerce "El Rincón de Coltrane" utilizando NextJs como mo
 Comando para levantar la aplicación:
 
 ```bash
+npm run dev
+```
+
+Comando para Build/Deploy:
+
+```bash
 npm run build
 ```
 
