@@ -8,3 +8,7 @@ export default async function isAdmin(uid: string) {
     const data = userDoc.data() as { role?: string };
     return data.role === "admin";
 }
+
+// Credenciales Cuenta Admin Coder:
+// Usuario: admincoder@coderhouse.com
+// Password: admincoder

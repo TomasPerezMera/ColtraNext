@@ -371,8 +371,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
             });
 
             // Luego de la transacción;
-            await clearCart();
             window.location.href = `/checkout?ticket=${ticketId}`;
+            await clearCart();
         })} catch (error) {
             toast.error('Error procesando compra: ' + error);
             }
