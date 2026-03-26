@@ -5,7 +5,7 @@ import { auth, db } from '@/lib/firebase/config';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { useParams, useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
-import Loading from '@/components/layout/loading';
+import Loading from '@/components/pages/Loading';
 
 export default function EditProductPage() {
     const params = useParams();

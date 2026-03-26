@@ -1,7 +1,8 @@
 @import './components.css';
+@import './layouts.css';
+@import './products.css';
 
 @tailwind base;
-
 @tailwind utilities;
 
 * {

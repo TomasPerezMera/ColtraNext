@@ -24,7 +24,7 @@ export default function ProductCard({ product }: { product: Product }) {
         </div>
         <p className="product-price mb-6">${product.currentPrice.toLocaleString()}</p>
         <Link href={`/products/${product.slug}`} className="btn gradient-border">
-            Ver detalle
+            Ver Detalle
         </Link>
         </article>
     );

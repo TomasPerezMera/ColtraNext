@@ -7,8 +7,8 @@ import { signOut } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import toastHelper from '@/helpers/toastHelper';
 import Link from 'next/link';
-import Loading from '@/components/layout/loading';
-import NotFound from '@/components/layout/not-found';
+import Loading from '@/components/pages/Loading';
+import NotFound from '@/components/pages/Not-Found';
 
 const toast = toastHelper();
 
@@ -59,20 +59,20 @@ export default function ProfilePage() {
         <div className="auth-container container grid grid-cols-1 my-2 w-full md:w-auto">
             <h1 className="header-title my-0">Mi Perfil</h1>
             <hr />
-            <div className="auth-card">
+            <div className="auth-card space-y-8">
                 <section className="info-block gradient-border my-4">
                     <h2 className="profile-section-title product-title my-1">Información Personal</h2>
                         <p><strong>Nombre: </strong>{userData.firstName} {userData.lastName}</p>
                         <p><strong>Email: </strong>{userData.email}</p>
-                        {userData.age && <p><strong>Edad:</strong> {userData.age}</p>}
+                        {userData.age && <p><strong>Edad: </strong>{userData.age}</p>}
                         <p><strong>Rol: </strong>{userData.role}</p>
                 </section>
-                <section className="profile-actions info-block reverse-gradient-border my-4">
+                <section className="profile-actions info-block reverse-gradient-border m-4 p-4 flex-row">
                     <button onClick={handleLogout} className="btn btn--danger">
-                        Cerrar sesión
+                        Cerrar Sesión
                     </button>
                     <div className="btn--return">
-                        <Link href="/" className="btn">Volver al inicio</Link>
+                        <Link href="/" className="btn w-full">Volver al Inicio</Link>
                     </div>
                 </section>
             </div>

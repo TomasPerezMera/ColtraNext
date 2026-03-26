@@ -4,7 +4,7 @@ import { db } from '@/lib/firebase/config';
 import { collection, getDocs } from 'firebase/firestore';
 import { Product } from '@/types';
 import { useEffect, useState } from 'react';
-import Loading from '@/components/layout/loading';
+import Loading from '@/components/pages/Loading';
 import { useSearchParams, useRouter } from 'next/navigation';
 import ProductGrid from '@/components/products/ProductGrid';
 

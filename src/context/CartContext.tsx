@@ -373,7 +373,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
             // Luego de la transacción;
             await clearCart();
-            toast.default('Compra exitosa!');
             window.location.href = `/checkout?ticket=${ticketId}`;
         })} catch (error) {
             toast.error('Error procesando compra: ' + error);

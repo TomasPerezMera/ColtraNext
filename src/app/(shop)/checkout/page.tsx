@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { Ticket } from '@/types';
 import toastHelper from '@/helpers/toastHelper';
 import router from 'next/router';
-import Loading from '@/components/layout/loading';
+import Loading from '@/components/pages/Loading';
 
 const toast = toastHelper();
 
@@ -35,27 +35,31 @@ export default function CheckoutPage() {
         setLoading(false);
         }
         loadTicket();
+        toast.purchase("Gracias por confiar en el Rincón de Coltrane!")
+        toast.purchase("Esperamos que disfrutes tus vinilos - volvé pronto!")
     }, [ticketId]);
 
     if (loading) return <Loading />;
     if (!ticket) return(
-        <>
-            <div className="container">Ticket no encontrado!</div>
+        <div className='container text-center my-6 p-6'>
+            <p className="text-2xl font-bold my-4">
+                Ticket no encontrado!
+            </p>
             <Link href="/products" className="btn" aria-label="Regresar al Catálogo">
                 Regresar al Catálogo
             </Link>
-        </>
+        </div>
     )
 
     return (
         <div className="auth-container">
-            <div className="auth-card reverse-gradient-border">
+            <div className="auth-card reverse-gradient-border text-xl">
                 <h1 className="product-title">Compra Exitosa!</h1>
 
-                <div className="product-info">
-                <p><strong>Código: </strong>{ticket.code}</p>
-                <p><strong>Email: </strong>{ticket.purchaserEmail}</p>
-                <p><strong>Total: </strong>${ticket.amount}</p>
+                <div className="product-info space-y-4">
+                <p className="font-bold"><strong>Código: </strong>{ticket.code}</p>
+                <p className='break-words'><strong>Email: </strong>{ticket.purchaserEmail}</p>
+                <p><strong>Total: </strong>${ticket.amount.toLocaleString()}</p>
                 <p><strong>Fecha: </strong>{ticket.purchaseDateTime.toDate().toLocaleDateString("es-ES", {
                     day: "numeric",
                     month: "numeric",
@@ -65,8 +69,8 @@ export default function CheckoutPage() {
 
                 <h3 className="text-xl mb-2">Productos:</h3>
                 {ticket.products.map((item, idx) => (
-                    <p key={idx}>
-                    {item.name} x{item.quantity} - ${item.price * item.quantity}
+                    <p className='text-center text-2xl' key={idx}>
+                    {item.name} x {item.quantity} - ${(item.price * item.quantity).toLocaleString()}
                     </p>
                 ))}
                 </div>

@@ -35,5 +35,21 @@ export default function toastHelper() {
             transition: Slide,
             autoClose: 2000,
             }),
+        purchase: (msg: string) => toast.error(msg, {
+            style: {
+                background: "linear-gradient(to right, #34A853, #277e3e)",
+                '--toastify-toast-width': '320px',
+                '--toastify-toast-min-height': '70px',
+                '--toastify-toast-max-height': '70px',
+                'fontSize': 'clamp(1rem, 2vw, 1.2rem)',
+            } as React.CSSProperties,
+            position: "top-right",
+            closeOnClick: true,
+            pauseOnHover: false,
+            hideProgressBar: true,
+            theme: "colored",
+            transition: Slide,
+            autoClose: 5000,
+            }),
     };
 }

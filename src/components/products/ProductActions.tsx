@@ -23,12 +23,12 @@ export default function ProductActions({ productId, maxStock }: { productId: str
                 <span className="qty-value">{quantity}</span>
                 <button className="btn qty-btn-detail qty-btn-plus" onClick={increase}>+</button>
             </div>
-            <Link href="/products" className="btn">Volver al catálogo</Link>
+            <Link href="/products" className="btn">Volver al Catálogo</Link>
             <button
                 className="add-to-cart btn gradient-border"
                 onClick={handleAddToCart}
             >
-                Agregar al carrito
+                Agregar al Carrito
             </button>
         </div>
     );
