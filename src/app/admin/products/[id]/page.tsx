@@ -1,16 +1,19 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { auth, db } from '@/lib/firebase/config';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { auth } from '@/lib/firebase/config';
 import { useParams, useRouter } from 'next/navigation';
-import toast from 'react-hot-toast';
+import toastHelper from '@/helpers/toastHelper';
 import Loading from '@/components/pages/Loading';
+import isAdmin from '@/helpers/isAdminHelper';
+
+const toast = toastHelper();
 
 export default function EditProductPage() {
     const params = useParams();
     const router = useRouter();
-    const productId = params.id as string;
+    const [loading, setLoading] = useState(true);
+    const user = auth.currentUser;
 
     const [formData, setFormData] = useState({
         name: '',
@@ -20,51 +23,62 @@ export default function EditProductPage() {
         stock: 0,
         category: 'Jazz',
         coverImageSource: '',
+        createdAt: '' as string | null
     });
-    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(async (user) => {
-        if (!user) {
+            if (!user) {
             router.push('/login');
             return;
-        }
-
-        // Cargar producto;
-        const productDoc = await getDoc(doc(db, 'products', productId));
-        if (productDoc.exists()) {
-            const data = productDoc.data();
-            setFormData({
-            name: data.name,
-            artist: data.artist,
-            description: data.description,
-            currentPrice: data.currentPrice,
-            stock: data.stock,
-            category: data.category,
-            coverImageSource: data.coverImageSource,
-            });
-        }
-        setLoading(false);
+            }
+            if (!(await isAdmin(user.uid))) {
+            toast.error('Acceso Denegado!');
+            router.push('/');
+            return;
+            }
         });
-
         return () => unsubscribe();
-    }, [router, productId]);
+        }, [router]);
+
+    // Cargar producto por ID;
+    useEffect(() => {
+        async function load() {
+            try {
+                const res = await fetch(`/api/products/${params.id}`);
+                const data = await res.json();
+                if (data.success && data.product) {
+                setFormData(prev => ({
+                    ...prev,
+                    ...data.product,
+                    }));
+                }
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setLoading(false);
+                }}
+            load();
+    }, [params.id]);
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
-
         try {
-        const slug = formData.name.toLowerCase().replace(/\s+/g, '-');
-
-        await updateDoc(doc(db, 'products', productId), {
-            ...formData,
-            slug,
-            isAvailable: formData.stock > 0,
-        });
-
-        toast.success('Producto actualizado');
-        router.push('/admin/products');
-        } catch (error) {
+            const res = await fetch(`/api/products/${params.id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    ...formData,
+                    uid: user?.uid,
+                    }),
+                });
+            const data = await res.json();
+            if (data.success) {
+            router.push('/admin/products');
+            toast.default('Producto Actualizado!');
+        } else {
+            throw new Error(data.error);
+        }} catch (error) {
         toast.error('Error al actualizar: ' + error);
         }
     }
@@ -137,7 +151,10 @@ export default function EditProductPage() {
                 <select
                 value={formData.category}
                 onChange={(e) => setFormData({...formData, category: e.target.value})}
-                className="form-input"
+                className="form-input bg-darkViolet text-white"
+                style={{
+                    colorScheme: 'dark'
+                }}
                 >
                 <option value="Jazz">Jazz</option>
                 <option value="Blues">Blues</option>
@@ -152,6 +169,22 @@ export default function EditProductPage() {
                 onChange={(e) => setFormData({...formData, coverImageSource: e.target.value})}
                 className="form-input"
                 required
+                />
+            </div>
+
+            <div className="form-group">
+                <label>Fecha de Creación</label>
+                <input
+                    type="datetime-local"
+                    value={formData.createdAt
+                        ? new Date(formData.createdAt).toISOString().slice(0, 10)
+                        : ''
+                    }
+                    onChange={(e) => setFormData({
+                        ...formData,
+                        createdAt: e.target.value ? new Date(e.target.value).toISOString() : null
+                    })}
+                    className="form-input"
                 />
             </div>
 

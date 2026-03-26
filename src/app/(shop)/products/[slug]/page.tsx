@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { db } from '@/lib/firebase/config';
-import { collection, getDocs } from 'firebase/firestore';
 import type { Product } from '@/types';
 import ProductDetail from '@/components/products/ProductDetail';
 import NotFound from '@/components/pages/Not-Found';
@@ -16,21 +14,25 @@ export default function ProductDetailPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-    async function load() {
-        try {
-            const snap = await getDocs(collection(db, 'products'));
-            const found = snap.docs.find(doc => doc.data().slug === params.slug);
-            if (found) {
-                setProduct({ id: found.id, ...found.data() } as Product);
-                } else {
+        async function load() {
+            try {
+            const res = await fetch(`/api/products?slug=${params.slug}`);
+            const data = await res.json();
+            if (data.success) {
+                setProduct(data.product);
+            } else {
                 setProduct(null);
-                }
-        } finally {
-        setLoading(false);
+            }
+            } catch (error) {
+            console.error(error);
+            setProduct(null);
+            } finally {
+            setLoading(false);
+            }
         }
-    }
-    load();
+        load();
     }, [params.slug]);
+
     if (loading) return <Loading />;
     if (!product) return <NotFound />;
 

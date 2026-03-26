@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { auth, db } from '@/lib/firebase/config';
-import { collection, addDoc, deleteDoc, doc, getDocs, getDoc } from 'firebase/firestore';
+import { auth, } from '@/lib/firebase/config';
 import { useRouter } from 'next/navigation';
 import toastHelper from '@/helpers/toastHelper';
+import isAdmin from '@/helpers/isAdminHelper';
+import Loading from '@/components/pages/Loading';
 
 const toast = toastHelper();
 
@@ -17,6 +18,7 @@ type Product = {
 export default function AdminProductsPage() {
     const router = useRouter();
     const [products, setProducts] = useState<Product[]>([]);
+    const [loading, setLoading] = useState(true);
     const [formData, setFormData] = useState({
         name: '',
         artist: '',
@@ -28,85 +30,84 @@ export default function AdminProductsPage() {
         coverImageSource: '',
     });
 
-    async function loadProducts() {
-        const snapshot = await getDocs(collection(db, 'products'));
-        const mappedProducts: Product[] = snapshot.docs.map(doc => {
-        const data = doc.data() as Omit<Product, "id">;
+    const user = auth.currentUser;
 
-            return {
-                id: doc.id,
-                ...data,
-            };
-        });
-        setProducts(mappedProducts);
+    async function loadProducts() {
+        const res = await fetch("/api/products");
+        const data = await res.json();
+        setProducts(data.products);
     }
 
     useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(async (user) => {
-        if (!user) {
-        router.push('/login');
-        return;
-        }
-        try {
-        const userDoc = await getDoc(doc(db, "users", user.uid));
-        if (!userDoc.exists()) {
+        const unsubscribe = auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+            router.push('/login');
+            return;
+            }
+
+            if (!(await isAdmin(user.uid))) {
+            toast.error('Acceso Denegado!');
             router.push('/');
             return;
-        }
-        const userData = userDoc.data() as { role?: string };
-        if (userData.role !== "admin") {
-            router.push('/');
-            return;
-        }
+            }
 
-        // Si el Usuario es válido y admin;
-        loadProducts();
-        } catch (error) {
-        console.error(error);
-        router.push('/');
-        }
-    });
-
-    return () => unsubscribe();
+            await loadProducts();
+            setLoading(false);
+        });
+        return () => unsubscribe();
     }, [router]);
+
+    if (loading) return <Loading />;
+
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         try {
-        const slug = formData.name.toLowerCase().replace(/\s+/g, '-');
-        await addDoc(collection(db, 'products'), {
-            ...formData,
-            slug,
-            isAvailable: true,
-            createdAt: new Date(),
-        });
-
-        toast.default('Producto Creado!');
-        setFormData({
-            name: '',
-            artist: '',
-            description: '',
-            currentPrice: 0,
-            stock: 0,
-            slug: '',
-            category: 'Jazz',
-            coverImageSource: '',
-        });
-        loadProducts();
+            const res = await fetch("/api/products", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                ...formData,
+                uid: user?.uid,
+                }),
+            });
+            const data = await res.json();
+            if (data.success) {
+            toast.default("Producto Creado!");
+            setFormData({
+                name: "",
+                artist: "",
+                description: "",
+                currentPrice: 0,
+                stock: 0,
+                slug: "",
+                category: "Jazz",
+                coverImageSource: "",
+            });
+            loadProducts();
+            } else {
+            throw new Error(data.error);
+            }
         } catch (error) {
-        toast.error('Error al crear producto: ' + error);
+            toast.error("Error al crear producto: " + error);
+            }
         }
-    }
 
     async function handleDelete(id: string) {
-        if (!confirm('¿Eliminar producto?')) return;
-
+        if (!confirm("¿Eliminar producto?")) return;
         try {
-        await deleteDoc(doc(db, 'products', id));
-        toast.default('Producto Eliminado!');
-        loadProducts();
+            const res = await fetch(`/api/products/${id}?uid=${user?.uid}`, {
+            method: "DELETE",
+            });
+            const data = await res.json();
+            if (data.success) {
+            toast.default("Producto Eliminado!");
+            loadProducts();
+            } else {
+            throw new Error(data.error);
+            }
         } catch (error) {
-        toast.error('Error al eliminar ' + error);
+            toast.error("Error al eliminar producto: " + error);
         }
     }
 
@@ -192,8 +193,8 @@ export default function AdminProductsPage() {
                         onChange={(e) => setFormData({...formData, category: e.target.value})}
                         className="form-input"
                     >
-                        <option value="Jazz">Jazz</option>
-                        <option value="Blues">Blues</option>
+                        <option value="Jazz" className='bg-darkViolet'>Jazz</option>
+                        <option value="Blues" className='bg-darkViolet'>Blues</option>
                     </select>
                     </div>
 
@@ -209,17 +210,17 @@ export default function AdminProductsPage() {
                     />
                     </div>
 
-                    <button type="submit" className="btn gradient-border">
+                    <button type="submit" className="btn gradient-border my-6">
                     Crear Producto
                     </button>
                 </form>
                 </div>
 
                 <div className='gradient-border px-4'>
-                    <h2 className="product-title my-2">Productos Existentes</h2>
+                    <h2 className="product-title my-4">Productos Existentes:</h2>
                     {products.map(product => (
                         <div key={product.id} className="product-card danger-gradient-border mx-auto p-1 text-center gap-0">
-                        <h3 className='text-violet font-bold'>{product.name}</h3>
+                        <h3 className='product-price my-2'>{product.name}</h3>
                         <p>Stock: {product.stock}</p>
                         <div className="flex gap-2 mt-2">
                             <button

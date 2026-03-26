@@ -45,7 +45,7 @@ export default function ProfilePage() {
     async function handleLogout() {
         try {
         await signOut(auth);
-        toast.default('Sesión cerrada');
+        toast.default('Sesión Cerrada');
         router.push('/');
         } catch (error) {
         toast.error('Error al cerrar sesión: ' + error);

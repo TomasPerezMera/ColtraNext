@@ -292,12 +292,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
     async function handlePurchase() {
         const user = auth.currentUser;
         if (!user) {
-            toast.error('Iniciá sesión para comprar');
             window.location.href = '/login';
             return;
         }
         if (!cart || cart.products.length === 0) {
-            toast.error('Carrito vacío');
+            toast.error('Carrito Vacío!');
             return;
         }
         try {
@@ -313,7 +312,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
                 const data = productSnap.data();
                 if (data.stock < item.quantity) {
-                throw new Error(`Stock insuficiente para ${item.name}`);
+                throw new Error(`Error - Stock insuficiente para ${item.name}!`);
                 }
             }
 

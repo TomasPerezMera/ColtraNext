@@ -1,7 +1,5 @@
 'use client';
 
-import { db } from '@/lib/firebase/config';
-import { collection, getDocs } from 'firebase/firestore';
 import { Product } from '@/types';
 import { useEffect, useState } from 'react';
 import Loading from '@/components/pages/Loading';
@@ -19,24 +17,17 @@ export default function ProductsPage() {
     useEffect(() => {
         async function load() {
             try {
-                const snap = await getDocs(collection(db, 'products'));
-                const data = snap.docs.map(d => ({
-                id: d.id,
-                ...d.data()
-                })) as Product[];
-                setProducts(data);
+            const res = await fetch(`/api/products?category=${selectedCategory}`);
+            const data = await res.json();
+            setProducts(data.products);
             } catch (error) {
-                console.error('Error:', error);
+            console.error('Error:', error);
             } finally {
-                setLoading(false);
+            setLoading(false);
             }
-            }
-            load();
-        }, []);
-
-    const filteredProducts = selectedCategory === 'all'
-    ? products
-    : products.filter(p => p.category === selectedCategory);
+        }
+        load();
+        }, [selectedCategory]);
 
     if (loading) return <Loading />;
 
@@ -62,7 +53,7 @@ export default function ProductsPage() {
                     className={`btn ${selectedCategory === 'Blues' ? 'gradient-border' : ''}`}
                     >Blues</button>
                 </div>
-            <ProductGrid products={filteredProducts} />
+                <ProductGrid products={products} />
             </section>
         </section>
     );

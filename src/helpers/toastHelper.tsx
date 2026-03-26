@@ -1,5 +1,4 @@
-import { toast } from 'react-toastify';
-import { Slide } from 'react-toastify';
+import { toast, Slide } from 'react-toastify';
 
 export default function toastHelper() {
     return {
@@ -9,7 +8,7 @@ export default function toastHelper() {
                 '--toastify-toast-width': '320px',
                 '--toastify-toast-min-height': '70px',
                 '--toastify-toast-max-height': '70px',
-                'fontSize': 'clamp(0.8rem, 2vw, 1rem)',
+                'fontSize': 'clamp(1rem, 2vw, 1.2rem)',
             } as React.CSSProperties,
             position: "top-right",
             closeOnClick: true,
@@ -25,15 +24,15 @@ export default function toastHelper() {
                 '--toastify-toast-width': '320px',
                 '--toastify-toast-min-height': '70px',
                 '--toastify-toast-max-height': '70px',
-                'fontSize': 'clamp(0.8rem, 2vw, 1rem)',
+                'fontSize': 'clamp(1rem, 2vw, 1.2rem)',
             } as React.CSSProperties,
             position: "top-right",
-            closeOnClick: true,
+            closeOnClick: false,
             pauseOnHover: true,
             hideProgressBar: true,
             theme: "colored",
             transition: Slide,
-            autoClose: 2000,
+            autoClose: 5000,
             }),
         purchase: (msg: string) => toast.error(msg, {
             style: {
