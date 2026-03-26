@@ -96,7 +96,7 @@ export default function LoginPage() {
                         <button
                             onClick={handleGoogleLogin}
                             disabled={loading}
-                            className="btn flex-1 min-w-[45%]"
+                            className="btn--google flex-1 min-w-[45%]"
                         >Google</button>
                     </div>
                     <div>

@@ -133,7 +133,7 @@ export default function RegisterPage() {
                         <button
                             onClick={handleGoogleLogin}
                             disabled={loading}
-                            className="btn"
+                            className="btn--google"
                         >Google</button>
                     </div>
                     <div>
