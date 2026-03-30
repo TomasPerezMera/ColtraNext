@@ -8,7 +8,11 @@ export default function ProductCard({ product }: { product: Product }) {
         <div className="cover-wrapper hover-vinyl max-h-80 mx-auto">
             <Link href={`/products/${product.slug}`}>
             <Image
-                src={`/static/covers/${product.coverImageSource}`}
+                src={
+                    product.coverImageSource.startsWith('http')
+                    ? product.coverImageSource
+                    : `/static/covers/${product.coverImageSource}`
+                }
                 alt={product.name}
                 width={300}
                 height={300}

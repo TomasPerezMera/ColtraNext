@@ -33,7 +33,11 @@ export default function CartItem({ item }: { item: CartItemType }) {
         <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr_auto] gap-4 items-center p-4 border-b border-violet/20 last:border-0">
         <div className="cover-wrapper hover-vinyl">
             <Image
-            src={`/static/covers/${item.coverImageSource}`}
+            src={
+                    item.coverImageSource.startsWith('http')
+                    ? item.coverImageSource
+                    : `/static/covers/${item.coverImageSource}`
+                }
             alt={item.name}
             width={150}
             height={150}

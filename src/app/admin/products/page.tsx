@@ -199,15 +199,19 @@ export default function AdminProductsPage() {
                     </div>
 
                     <div className="form-group">
-                    <label>Imagen (filename)</label>
+                    <h2 className='product-title'>Imagen (filename Ó URL de Imgur)</h2>
+                    <label>Filename del Álbum (si se ha cargado a la carpeta de imágenes) ó Imgur Link</label>
                     <input
-                        type="text"
+                        type="text, url"
                         value={formData.coverImageSource}
                         onChange={(e) => setFormData({...formData, coverImageSource: e.target.value})}
                         className="form-input"
-                        placeholder="blue-train.jpg"
+                        placeholder="blue-train.jpg // https://i.imgur.com/abc123.jpg"
                         required
                     />
+                    <small className="text-gray-400">
+                        Para Imgur: Subí la imagen a <a href="https://imgur.com/upload" target="_blank" rel="noopener noreferrer" className="text-violet-500">Imgur</a> y pegá el link directo!
+                    </small>
                     </div>
 
                     <button type="submit" className="btn gradient-border my-6">

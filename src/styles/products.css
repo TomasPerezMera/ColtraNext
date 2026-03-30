@@ -126,3 +126,18 @@
     font-weight: 500;
     line-height: 1.2;
 }
+
+/* Featured Products Styles */
+
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+.carousel-container {
+    scroll-behavior: smooth;
+}

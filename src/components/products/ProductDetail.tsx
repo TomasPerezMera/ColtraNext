@@ -8,7 +8,11 @@ export default function ProductDetail({ product }: { product: Product }) {
         <div className="product-detail-grid grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="cover-wrapper hover-vinyl product-detail-image md:sticky md:top-6 md:self-start">
                 <Image
-                src={`/static/covers/${product.coverImageSource}`}
+                src={
+                    product.coverImageSource.startsWith('http')
+                    ? product.coverImageSource
+                    : `/static/covers/${product.coverImageSource}`
+                }
                 alt={product.name}
                 width={400}
                 height={400}
